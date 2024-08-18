@@ -60,6 +60,9 @@ fn list_tickets(tickets: &Vec<Ticket>) {
     //i is the index of the element, ticket is a reference to the element
     //using i + 1 to start the ticket numbering at 1 instead of 0
     //.iter() returns an iterator over the vector
+    println!("================================================================");
+    println!("====TICKETS IN MEMORY===================TICKETS IN MEMORY=======");
+    println!("================================================================");
     for (i, ticket) in tickets.iter().enumerate() {
         println!(
             //print out the ticket's tixid, description, priority, status, type, estimated duration, and duration value
@@ -75,6 +78,9 @@ fn list_tickets(tickets: &Vec<Ticket>) {
             ticket.duration_value.to_uppercase(),
         );
     }
+    println!("================================================================");
+    println!("====TICKETS IN MEMORY===================TICKETS IN MEMORY=======");
+    println!("================================================================");
 }
 
 //UPDATE TICKET FUNCTION
@@ -260,11 +266,17 @@ fn main() {
     };
 
     loop {
+        println!("================================================================");
+        println!("====MENU========================MENU=================MENU=======");
+        println!("================================================================");
         println!("1. Create Ticket(s)");
         println!("2. List Tickets");
         println!("3. Update Existing Ticket");
         println!("4. Delete Ticket");
         println!("5. Save Work to File & Exit Application");
+        println!("================================================================");
+        println!("==INPUT BELOW=======================INPUT BELOW=================");
+        println!("================================================================");
         //utilize flush on standard out to ensure its appearance (immediately buffered contents meet their destination)
         io::stdout().flush().unwrap();
 
@@ -274,29 +286,41 @@ fn main() {
 
         match choice {
             1 => {
+                println!("================================================================");
                 println!("Enter a ticket DESCRIPTION: ");
+                println!("================================================================");
                 let mut description = String::new();
                 io::stdin().read_line(&mut description).expect("Failed to read line.");
-
+                
+                println!("================================================================");
                 println!("Enter a ticket PRIORITY (1-5): ");
+                println!("================================================================");
                 let mut priority_str = String::new();
                 io::stdin().read_line(&mut priority_str).expect("Failed to read line.");
                 let priority: u8 = priority_str.trim().parse().expect("Please enter a valid u8 number (1-5).");
 
+                println!("================================================================");
                 println!("Enter a TICKET TYPE (Research | Development | BugFix): ");
+                println!("================================================================");
                 let mut ticket_type = String::new();
                 io::stdin().read_line(&mut ticket_type).expect("Failed to read line.");
 
+                println!("================================================================");
                 println!("Enter a ticket DURATION value: ");
+                println!("================================================================");
                 let mut estimated_duration_str = String::new();
                 io::stdin().read_line(&mut estimated_duration_str).expect("Failed to read line.");
                 let estimated_duration: u32 = estimated_duration_str.trim().parse().expect("Please enter a valid u32 number representing a time value for duration.");
 
+                println!("================================================================");
                 println!("Enter a ticket DURATION UNIT (e.g. Hours, Days): ");
+                println!("================================================================");
                 let mut duration_value = String::new();
                 io::stdin().read_line(&mut duration_value).expect("Failed to read line.");
 
+                println!("================================================================");
                 println!("Enter a ticket STATUS (Open | In-Review | Closed): ");
+                println!("================================================================");
                 let mut status = String::new();
                 io::stdin().read_line(&mut status).expect("Failed to read line.");
 
@@ -340,7 +364,21 @@ fn main() {
                             println!("Change Ticket PRIORITY (1-5) (ENTER or RETURN without editing to keep the same Priority): ");
                             let mut priority_input = String::new();
                             io::stdin().read_line(&mut priority_input).expect("Failed to read line.");
-                            let priority: u8 = priority_input.trim().parse().expect("faile to read non u8 character. Please put in a number between 1 (severe) and 5 (trivial)");
+                            let trimmed_input = priority_input.trim();
+
+                            let mut priority: Option<u8> = None;
+
+                            if !trimmed_input.is_empty() {
+                                match trimmed_input.parse::<u8>() {
+                                    Ok(num) if num >= 1 && num <= 5 => {
+                                        priority = Some(num);
+                                    },
+                                    _ => {
+                                        println!("Failed to read a valid number between 1 and 5")
+                                    }
+                                }
+                            }
+                            
 
                             let new_status = if status.trim().is_empty() {
                                 None
@@ -354,11 +392,7 @@ fn main() {
                                 Some(description.trim().to_string())
                             };
 
-                            let new_priority = if priority_input.trim().is_empty() {
-                                None
-                            } else {
-                                Some(priority)
-                            };
+                            let new_priority = priority.map(|p| p);
 
                             let tixid = inputid;
 
