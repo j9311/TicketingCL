@@ -55,6 +55,7 @@ fn create_ticket(
 //takes in a reference to a vector of tickets
 //iterates over the vector and prints out each ticket's description, priority, status, type, estimated duration, and duration value
 fn list_tickets(tickets: &Vec<Ticket>) {
+    let saved_tickets = load_tickets("tickets.txt").unwrap_or_default();
     //iterate over the vector of tickets
     //enumerate() returns an iterator that yields the index of the element along with a reference to the element itself
     //i is the index of the element, ticket is a reference to the element
@@ -68,7 +69,7 @@ fn list_tickets(tickets: &Vec<Ticket>) {
             //print out the ticket's tixid, description, priority, status, type, estimated duration, and duration value
             //{} is a placeholder for the values that will be inserted into the string
             //i + 1 is the ticket number
-            "{}: [{}] {} (Priority: {}, Type: {}, Estimated Duration: {} {})",
+            "{}: [{}] - {} - (Priority: {}, Type: {}, Estimated Duration: {} {})",
             ticket.tixid,
             ticket.status.to_uppercase(),
             ticket.description,
@@ -80,6 +81,25 @@ fn list_tickets(tickets: &Vec<Ticket>) {
     }
     println!("================================================================");
     println!("====TICKETS IN MEMORY===================TICKETS IN MEMORY=======");
+    println!("================================================================");
+
+    println!("================================================================");
+    println!("====TICKETS IN FILES=====================TICKETS IN FILES=======");
+    println!("================================================================");
+    for (i, ticket) in saved_tickets.iter().enumerate(){
+        println!(
+            "{}: [{}] - {} - (Priority: {}, Type: {}, Estimated Duration: {} {})",
+            i + 1 + tickets.len(),
+            ticket.status.to_uppercase(),
+            ticket.description,
+            ticket.priority,
+            ticket.ticket_type.to_uppercase(),
+            ticket.estimated_duration,
+            ticket.duration_value.to_uppercase(),
+        );
+    }
+    println!("================================================================");
+    println!("====TICKETS IN FILES=====================TICKETS IN FILES=======");
     println!("================================================================");
 }
 
@@ -410,6 +430,18 @@ fn main() {
                     Err(_) => println!("Invalid input. Please enter a valid ticket number. See the ticket list for active tickets.")
                 }
                                     
+            }, 
+            4 => {
+                println!("Enter a ticket number to remove: ");
+                let mut num = String::new();
+                io::stdin().read_line(&mut num).expect("Failed to read line.");
+                let index: usize = num.trim().parse().expect("Please enter a valid numnber.");
+                remove_ticket(&mut tickets, index);
+            },
+            5 => {
+                //save all of the tickets thus made, exit loop
+                save_tickets(&tickets, "tickets.txt").expect("Failed to save tickets.");
+                break;
             }
             _ => {
                 println!("Invalid input");
